@@ -1,0 +1,17 @@
+struct s_data
+{
+  int size;
+  char *fmt;
+  
+};
+
+struct s_block
+{
+  char type;
+  void *block;
+};
+  
+int main()
+{
+
+}

@@ -4,38 +4,15 @@
 #include <poll.h>
 #include <unistd.h>
 #include <stdlib.h>
-
 #include <stdio.h>
+#include "server.h"
 
-typedef struct sockaddr_in t_sockaddr_in;
-typedef struct pollfd t_pollfd;
-typedef struct sockaddr t_sockaddr;
-
-typedef struct class_server_s class_server_t;
-typedef void (*method) (class_server_t *);
-struct class_server_s
-{
-  unsigned short int port;
-  int sock;
-  t_pollfd event;
-  t_sockaddr_in server;  
-  t_sockaddr_in info;
-  socklen_t size;
-  
-  method m_fct[3];
-};
-
-void ft_sock(class_server_t *o_server);
-void ft_wait_sock(class_server_t *o_server);
-void ft_accept(class_server_t *o_server);
-
-class_server_t *init_object_server(char *port);
-class_server_t *init_object_server(char *port)
+class_server_t *init_object_server(int port)
 {
   class_server_t *o_server;
 
   o_server = (class_server_t *)malloc(sizeof(class_server_t));
-  o_server->port = atoi(port);
+  o_server->port = port;
   o_server->m_fct[0] = ft_sock;
   o_server->m_fct[1] = ft_wait_sock;
   o_server->m_fct[2] = ft_accept;
@@ -50,11 +27,8 @@ int main(int argc, char **argv)
 
   if (argc != 2)
     return (-1);
-  o_server = init_object_server(argv[1]);
+  o_server = init_server(atoi(argv[1]));
 
-  c = -1;
-  while(++c < 3)
-    (*o_server->m_fct[c])(o_server);
   while(1)
     {
       read(o_server->sock, &c, 1);
