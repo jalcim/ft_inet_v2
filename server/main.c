@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "server.h"
 
+t_block **block_tab(int sock);
+
 class_server_t *init_object_server(int port)
 {
   class_server_t *o_server;
@@ -22,21 +24,15 @@ class_server_t *init_object_server(int port)
 int main(int argc, char **argv)
 {
   class_server_t *o_server;
-  char c;
-  char b;
 
   if (argc != 2)
     return (-1);
   o_server = init_server(atoi(argv[1]));
 
-  while(1)
-    {
-      read(o_server->sock, &c, 1);
-      write(1, &c, 1);
-      if (b == '\n' && c == '\r')
-	break;
-      b = c;
-    }
+  ft_wait_sock(o_server);
+
+  block_tab(o_server->sock);
+
   close(o_server->sock);
   free(o_server);
 }
@@ -58,14 +54,30 @@ void ft_wait_sock(class_server_t *o_server)
   o_server->event.events = POLLIN;
   if ((poll(&o_server->event, sizeof(t_pollfd), 1)) == -1)
     perror("poll -> ");
-  if (listen(o_server->event.fd, 1) == -1)
-    perror("listen -> ");
 }
 
 void ft_accept(class_server_t *o_server)
 {
+  if (listen(o_server->event.fd, 1) == -1)
+    perror("listen -> ");
   o_server->size = sizeof(t_sockaddr);
   o_server->sock = accept(o_server->event.fd, (t_sockaddr *)&o_server->info, &o_server->size);
   if (o_server->sock == -1)
     perror("accept -> ");
+}
+
+inline void server_run(class_server_t *o_server)
+{
+  (*o_server->m_fct[0])(o_server);
+  (*o_server->m_fct[1])(o_server);
+  (*o_server->m_fct[2])(o_server);
+}
+
+inline class_server_t *init_server(int port)
+{
+  class_server_t *o_server;
+
+  o_server = init_object_server(port);
+  server_run(o_server);
+  return (o_server);
 }

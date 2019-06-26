@@ -1,5 +1,14 @@
 #ifndef __SERVER_H_
 #define __SERVER_H__
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 typedef struct sockaddr_in t_sockaddr_in;
 typedef struct pollfd t_pollfd;
 typedef struct sockaddr t_sockaddr;
@@ -14,7 +23,7 @@ struct class_server_s
   t_sockaddr_in server;  
   t_sockaddr_in info;
   socklen_t size;
-  
+
   method m_fct[3];
 };
 
@@ -27,18 +36,16 @@ void server_run(class_server_t *o_server);
 
 class_server_t *init_server(int port);
 
-inline void server_run(class_server_t *o_server)
-{
-  (*o_server->m_fct[0])(o_server);
-  (*o_server->m_fct[1])(o_server);
-  (*o_server->m_fct[2])(o_server);
-}
-inline class_server_t *init_server(int port)
-{
-  class_server_t *o_server;
+/////////////////////////////////////
 
-  o_server = init_object_server(port);
-  server_run(o_server);
-  return (o_server);
-}
+typedef struct s_block t_block;
+
+struct s_block
+{
+  unsigned int size[3];
+  char *ops, *lib, *data;
+};
+
+
+
 #endif

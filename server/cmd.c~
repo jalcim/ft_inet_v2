@@ -1,0 +1,12 @@
+typedef struct s_block t_block;
+
+struct s_block
+{
+  int size;
+  char *buffer;
+};
+
+t_block **read_block_sock(int sock)
+{
+  
+}

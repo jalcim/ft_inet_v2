@@ -1,0 +1,3 @@
+[submodule "chargeur-dynamique"]
+	path = chargeur-dynamique
+	url = https://github.com/jalcim/chargeur-dynamique.git
